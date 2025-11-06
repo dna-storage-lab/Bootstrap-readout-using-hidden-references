@@ -1,0 +1,124 @@
+#!/bin/bash
+
+
+SubReadsFile=$1
+WatermarkSeq=$2
+outputDir=$3
+ReadLength=$4   
+NumReads=$5                   
+ins=$6
+del=$7
+sub=$8
+CorrThreshold=$9       
+NumThreads=${10}
+
+
+
+echo -e "\n\n========================================================"
+echo "Start the first recovery process!"
+echo "========================================================"
+
+    # NOTE: Only I/O file paths are listed in Inputs/Outputs for brevity.
+
+    # ----------------------------------------------------------
+    # [Step 1]: Sliding Correlation
+    # ----------------------------------------------------------
+    # Inputs:
+    #   • WatermarkSeq                  – known watermark sequence
+    #   • SubReadsFile                  – Sequencing data
+    # Outputs:
+    #   • CorrelationResultsFile        – read alignment info
+    CorrelationResultsFile="$outputDir/correlation_result.txt"
+    echo "[Step 1] Sliding correlation"
+    ./bin/SlidingCorrelation  \
+        "$NumThreads" \
+        "$ReadLength" \
+        "$NumReads" \
+        "$WatermarkSeq" \
+        "$SubReadsFile" \
+        "$CorrelationResultsFile"
+
+    # Type-I Reads Filtering Based on Correlation Threshold
+    # Inputs:
+    #   • CorrelationResultsFile         – read alignment info
+    # Outputs:
+    #   • TypeI_Reads                    – Type-I Reads
+    #   • low_corr_reads                 – correlation-failed reads
+    TypeI_Reads="$outputDir/Type-I_reads.txt"
+    low_corr_reads="$outputDir/lowthres_reads.txt"
+    ./bin/getthre \
+      "$CorrelationResultsFile" \
+      "$NumReads" \
+      "$CorrThreshold" \
+      "$TypeI_Reads" \
+      "$low_corr_reads"
+
+
+
+    # ----------------------------------------------------------
+    # [Step 2] Forward-Backward Algorithm 
+    # ----------------------------------------------------------
+    # Inputs:
+    #   • TypeI_Reads                      –  from Step 1
+    #   • WatermarkSeq                     – known watermark sequence
+    # Outputs:
+    #   • FB_output                        – indel corrected symbol probability
+    FB_output="$outputDir/symbol_probability.txt"
+    mode=0
+    echo "[Step 2]  Forward-Backward Algorithm "
+    ./bin/R5_6_indel_correct  \
+      "$TypeI_Reads" \
+      "$FB_output" \
+      "$WatermarkSeq" \
+      "$ins" \
+      "$sub" \
+      "$del" \
+      "$mode"
+
+
+
+    # ----------------------------------------------------------
+    # [Step 3] Consensus soft information generation
+    # ----------------------------------------------------------
+    echo "[Step 3]  Consensus soft information generation"
+    outputfile_corr1="$outputDir/soft_info.txt"
+    ./bin/R5_6_multi-read_merging \
+      "$FB_output" \
+      "$outputfile_corr1" \
+      "$WatermarkSeq" 
+
+
+
+    # ----------------------------------------------------------
+    # [Step 4] LDPC Decoding
+    # ----------------------------------------------------------
+    # BER
+    BitErrorRateFile="$outputDir/BER.txt"
+    encoded_bit="./configure/encoded_bit.txt"
+    EncodeBitLen=64800
+    ./bin/CalBitError  \
+        "$outputfile_corr1" \
+        "$encoded_bit" \
+        "$EncodeBitLen"  \
+        "$BitErrorRateFile" 
+
+    echo "[Step 4]  LDPC decoding"
+    correctedBitStream1="$outputDir/recovery_bitstream.txt"
+    recovery_image1="$outputDir/recovery_image.jpg"
+    dec_results="$outputDir/decodedCodeword.txt"
+    ./bin/LDPC_r5_6_soft_decoder \
+      "$outputfile_corr1" \
+      "$correctedBitStream1" \
+      "$recovery_image1" \
+      S \
+      "$dec_results"
+
+    OriginalBitstreamFile="./configure/source_bit.txt"
+    BitstreamLen=54000
+    hamming_error_after_dec1="$outputDir/err_of_dec_result.txt"
+    ./bin/post_dec_hamming_dis \
+      "$correctedBitStream1" \
+      "$OriginalBitstreamFile" \
+      "$hamming_error_after_dec1" \
+      "$BitstreamLen"
+
