@@ -1,5 +1,8 @@
 # Fast bootstrap and reliable readout using hidden references for DNA data storage
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17545118.svg)](https://doi.org/10.5281/zenodo.17545118)
+
+
 ![Alt Text](./image/image.png)
 
 ## Table of Contents
