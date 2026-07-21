@@ -14,6 +14,7 @@
   - [2. Bootstrap recovery (ONT data, R=2/3)](#2-bootstrap-recovery)
 - [Note](#note)
 - [License](#license)
+- [Citation](#Citation)
 
 ## Overview
 
@@ -282,3 +283,22 @@ For comprehensive information on the coding scheme in this study, please refer t
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE] file for details.
+
+## Citation
+If you find this repository useful or use it in your research, please consider citing the following paper:
+
+[Fast bootstrap and reliable readout using hidden references for DNA data storage](https://doi.org/10.1002/imt2.70105)
+
+```
+@article{Chen2026,
+  title = {Fast bootstrap and reliable readout using hidden references for DNA data storage},
+  author = {Chen, Weigang and Liu, Shuang and Guo, Quan and Qin, Rui and Ge, Qi and Qi, Tingting and Yuan, Yingjin},
+  journal = {iMeta},
+  volume = {5},
+  number = {1},
+  pages = {e70105},
+  year = {2026},
+  doi = {https://doi.org/10.1002/imt2.70105},
+  url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/imt2.70105}
+}
+```
