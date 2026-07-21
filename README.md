@@ -1,9 +1,6 @@
 # Fast bootstrap and reliable readout using hidden references for DNA data storage
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17545118.svg)](https://doi.org/10.5281/zenodo.17545118)
-
-
-![Alt Text](./image/image.png)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17545118.svg)](https://doi.org/10.5281/zenodo.17545118)![Alt Text](./image/image.png)
 
 ## Table of Contents
 
@@ -14,17 +11,23 @@
   - [2. Bootstrap recovery (ONT data, R=2/3)](#2-bootstrap-recovery)
 - [Note](#note)
 - [License](#license)
-- [Citation](#Citation)
+- [Citation](#citation)
 
 ## Overview
 
 Synthetic DNA is becoming a promising data storage medium for future large-scale data archiving. However, data readout from massive, unordered sequencing reads requires alignment based on overlapping regions and is complicated by diverse sequencing errors. We propose a multi-stage alignment and error correction strategy via multiple-fold hidden references, transforming the de novo readout into a resequencing-like workflow. We provide code for readout pipelines under different error conditions, divided into two main parts：
 
-1. **Fast recovery**: In low-error-rate scenarios, the pipeline identifies reads via sliding correlation to watermark reference. Bit-wise consensus rapidly generates soft-decision information for LDPC decoding.
+1. **Fast recovery**: In low-error-rate scenarios, the pipeline identifies reads via sliding correlation to the watermark reference. Bit-wise consensus rapidly generates soft-decision information for LDPC decoding.
 2. **Bootstrap recovery**: In the presence of indels, the pipeline progressively identifies reads with distinct features using multiple-fold references. The forward–backward algorithm (FBA) generates indel-corrected probability information for reliable readout.
 
 The proposed scheme is compatible with next-generation sequencing (NGS) and Oxford Nanopore Technologies (ONT) sequencing platforms (see [Summary of datasets](docs/Summary%20of%20datasets.pdf)). We provide the complete source code and datasets used to generate the recovery results presented in this study
 (see [Summary of experiments](docs/Summary%20of%20experiments.pdf)).
+
+
+>This repository accompanies the paper published in [iMeta](https://doi.org/10.1002/imt2.70105).
+>
+>Chen, Weigang, Shuang Liu, Quan Guo, Rui Qin, Qi Ge, Tingting Qi, and Yingjin Yuan. 2026. “ Fast Bootstrap and Reliable Readout Using Hidden References for DNA Data Storage.” *iMeta* **5**, e70105. https://doi.org/10.1002/imt2.70105   
+ 
 
 ---
 
